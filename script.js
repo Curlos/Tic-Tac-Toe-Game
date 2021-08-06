@@ -67,7 +67,7 @@ const isGameOver = (markerContent) => {
     allWinningPosVal.forEach((arr) => {
         arr.forEach((winningPosVal) => {
             if (allPos[markerContent].length >= 3) {
-                const checkIfAllWinningPos = allPos[markerContent].every(pos => winningPosVal.includes(pos))
+                const checkIfAllWinningPos = winningPosVal.every(pos => allPos[markerContent].includes(pos))
 
                 if (checkIfAllWinningPos) {
                     console.log('GAME OVER')
