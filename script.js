@@ -32,7 +32,6 @@ const Player = (name, marker) => {
 const handleClick = (event) => {
     const cell = event.target
     const positionValue = cell.getAttribute('positionValue')
-    console.log(positionValue)
     const marker = cell.childNodes[1]
 
     if (!isMarked(marker)) {
@@ -56,32 +55,61 @@ const markBox = (marker, positionValue) => {
     marker.textContent = markerContent
     gameBoard[positionValue] = markerContent
     allPos[markerContent].push(Number(positionValue))
-    console.log(allPos)
     isGameOver(markerContent)
 }
 
 const isGameOver = (markerContent) => {
     const allWinningPosVal = Object.values(allWinningPositions)
-    console.log(allWinningPosVal)
+    
+    if (threeInARow(allWinningPosVal, markerContent)) {
+        console.log('GAME OVER.')
+        endGame('Three in a row', markerContent)
+        return true
+    }
 
-    allWinningPosVal.forEach((arr) => {
-        arr.forEach((winningPosVal) => {
-            if (allPos[markerContent].length >= 3) {
-                const checkIfAllWinningPos = winningPosVal.every(pos => allPos[markerContent].includes(pos))
-
-                if (checkIfAllWinningPos) {
-                    console.log('GAME OVER')
-                    return true
-                }
-            }
-        })
-    })
+    if(tieGame()) {
+        endGame('tie')
+        return true
+    }
 
     return false
 }
 
-const endGame = () => {
+const threeInARow = (allWinningPosVal, markerContent) => {
+    for (let arr of allWinningPosVal) {
+        for (let winningPosVal of arr) {
+            if (allPos[markerContent].length >= 3) {
+                const checkIfAllWinningPos = winningPosVal.every(pos => allPos[markerContent].includes(pos))
 
+                if (checkIfAllWinningPos) {
+                    return true
+                }
+            }
+        }
+    }
+
+    return false
+}
+
+const tieGame = () => {
+    for (let posValue in gameBoard) {
+        if (gameBoard[posValue] == '&nbsp;') {
+            return false
+        }
+    }
+    return true
+}
+
+const endGame = (endType, markerContent='') => {
+    if (endType == 'Three in a row') {
+        if (player1.getMarker() == markerContent) {
+            console.log('PLAYER 1 WINS.')
+        } else {
+            console.log('PLAYER 2 WINS.')
+        }
+    } else if (endType == 'tie') {
+        console.log('NO ONE WINS. TIE GAME.')
+    }
 }
 
 const restartGame = () => {
@@ -100,14 +128,10 @@ const isMarked = (marker) => marker.innerHTML === '&nbsp;' ? false : true
 const startGame = () => {
     for (let cell of grid) {
         cell.addEventListener('click', handleClick)
-        console.log(cell)
     }
 
     restartGame()
-    
     restartGameButton.addEventListener('click', restartGame)
-
-    console.log(allWinningPositions)
 }
 
 const allWinningPositions = {
