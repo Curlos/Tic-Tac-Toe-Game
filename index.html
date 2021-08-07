@@ -14,20 +14,19 @@
         <div class="gameContainer">
             <div class="selectionContainer">
                 <select name="difficultyLevels" id="difficultyLevelsSelect">
-                    <option value="">Easy</option>
-                    <option value="">Medium</option>
-                    <option value="">Impossible</option>
-                    <option value="">Play against a friend</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Impossible">Impossible</option>
                 </select>
 
                 <select name="gamemode" id="gamemode">
-                    <option value="">Player vs. AI</option>
-                    <option value="">Player vs Player (Local)</option>
-                    <option value="">Player vs Player (Network)</option>
+                    <option value="PVE">Player vs. AI</option>
+                    <option value="PVP">Player vs Player (Local)</option>
+                    <option value="PVPNetwork">Player vs Player (Network)</option>
                 </select>
         
                 <span></span>
-                <button>Share</span>
+                <button id="share">Share</button>
             </div>
         
             <div class="playerTurnContainer">

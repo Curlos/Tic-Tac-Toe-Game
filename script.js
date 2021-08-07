@@ -7,6 +7,7 @@ const playerOneScoreElem = document.querySelector('.playerOneScore')
 const playerTwoScoreElem = document.querySelector('.playerTwoScore')
 const gamemode = document.getElementById('gamemode')
 const difficultyLevelsSelect = document.getElementById('difficultyLevelsSelect')
+const shareButton = document.getElementById('share')
 
 const gameBoard = {
     "1": "&nbsp;",
@@ -50,14 +51,15 @@ const handleClick = (event) => {
 
 const markBox = (marker, positionValue) => {
     let markerContent;
+    console.log(currentPlayerTurn)
 
     if (currentPlayerTurn === player1) {
         markerContent = player1.getMarker()
         currentPlayerTurn = player2
         gameStatus.textContent = `${markerContent == 'X' ? 'O': 'X'} Turn`
+
         playerOneContainer.classList.remove('playerTurn')
         playerTwoContainer.classList.add('playerTurn')
-        
     } else {
         markerContent = player2.getMarker()
         currentPlayerTurn = player1
@@ -66,10 +68,17 @@ const markBox = (marker, positionValue) => {
         playerTwoContainer.classList.remove('playerTurn')
     }
 
+    marker.classList.add('markerDraw')
+
     marker.textContent = markerContent
     gameBoard[positionValue] = markerContent
     allPos[markerContent].push(Number(positionValue))
-    isGameOver(markerContent)
+
+    if(!isGameOver(markerContent) && currentPlayerTurn != player1) {
+        botTurn()
+    }
+
+
 }
 
 const isGameOver = (markerContent) => {
@@ -146,6 +155,11 @@ const updateScore = (player) => {
     } else {
         playerTwoScoreElem.textContent = player.getScore()
     }
+
+    console.log(gameBoard)
+    for (let elem of grid) {
+        console.log(elem)
+    }
 }
 
 const restartGame = () => {
@@ -161,16 +175,80 @@ const restartGame = () => {
     grid.forEach((cell) => {
         cell.classList.remove('winningCell')
         const marker = cell.childNodes[1]
+        marker.classList.remove('markerDraw')
         marker.innerHTML = '&nbsp;'
     })
+
+    for (let posVal in gameBoard) {
+        gameBoard[posVal] = '&nbsp;'
+    }
 }
 
 const isMarked = (marker) => marker.innerHTML === '&nbsp;' ? false : true
 
-const setGamemode = () => {
-    let selectedGamemode = gamemode.options[gamemode.selectedIndex].text;
+const botTurn = () => {
+    let elem;
 
-    console.log(selectedGamemode)
+    console.log(difficulty)
+
+    switch(difficulty) {
+        case 'Easy':
+            elem = findNextEmptyElem()
+            break
+        case 'Medium':
+            elem = findNextEmptyElemRandom()
+            break
+        case 'Impossible':
+            elem = findNextEmptyElemMinMax()
+            break
+    }
+
+    elem.click()
+    console.log(document.getElementById('difficultyLevelsSelect').value)
+}
+
+const findNextEmptyElem = () => {
+    for (let cell of grid) {
+        const marker = cell.childNodes[1]
+
+        if (!isMarked(marker)) {
+            return cell
+        }
+    }
+}
+
+const findNextEmptyElemRandom = () => {
+    let foundElem = null
+    while (foundElem == null) {
+        const randomIndex = getRandomInt(0, grid.length - 1)
+        const cell = grid[randomIndex]
+        const marker = cell.childNodes[1]
+        if(!isMarked(marker)) {
+            foundElem = cell
+            break
+        }
+    }
+
+    return foundElem
+}
+
+const findNextEmptyElemMinMax = () => {
+
+}
+
+const getRandomInt = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+  }
+
+const setGamemode = () => {
+    selectedGamemode = gamemode.options[gamemode.selectedIndex].text;
+    restartGame()
+}
+
+const setDifficulty = () => {
+    difficulty = difficultyLevelsSelect.value
     restartGame()
 }
 
@@ -179,10 +257,14 @@ const startGame = () => {
     for (let cell of grid) {
         cell.addEventListener('click', handleClick)
     }
-    for (let cell of grid) {
-        handleClick(cell)
-    }
-    difficultyLevelsSelect.addEventListener('change', restartGame)
+
+    shareButton.addEventListener('click', () => {
+        for (let cell of grid) {
+            cell.click()
+        }
+    })
+    
+    difficultyLevelsSelect.addEventListener('change', setDifficulty)
     gamemode.addEventListener('change', setGamemode)
     gameStatus.textContent = `X Turn`
 
@@ -200,8 +282,13 @@ const allPos = {
     'X': [],
     'O': []
 }
+
 const player1 = Player('Player1', 'X')
 const player2 = Player('Player2', 'O')
+let difficulty = difficultyLevelsSelect.value
+let selectedGamemode = gamemode.options[gamemode.selectedIndex].text;
 let currentPlayerTurn = player1
 
-startGame()
+document.addEventListener('DOMContentLoaded', (event) => {
+    startGame()
+})
