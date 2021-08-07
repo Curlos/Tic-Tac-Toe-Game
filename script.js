@@ -43,13 +43,23 @@ const handleClick = (event) => {
     const marker = cell.childNodes[1]
 
     if (!isMarked(marker)) {
-        markBox(marker, positionValue)
+        if (selectedGamemode == 'Player vs. AI' && currentPlayerTurn != player1) {
+            console.log('1')
+            setTimeout(() => markBox(marker, positionValue), 800)
+        } else {
+            console.log('2')
+            markBox(marker, positionValue)
+        }
     }
 
     
 }
 
 const markBox = (marker, positionValue) => {
+    if (gameProgress != 'In progress') {
+        return
+    }
+
     let markerContent;
     console.log(currentPlayerTurn)
 
@@ -74,18 +84,15 @@ const markBox = (marker, positionValue) => {
     gameBoard[positionValue] = markerContent
     allPos[markerContent].push(Number(positionValue))
 
-    if(!isGameOver(markerContent) && currentPlayerTurn != player1) {
+    if(!isGameOver(markerContent) && currentPlayerTurn != player1 && selectedGamemode == 'Player vs. AI') {
         botTurn()
     }
-
-
 }
 
 const isGameOver = (markerContent) => {
     const allWinningPosVal = Object.values(allWinningPositions)
     
     if (threeInARow(allWinningPosVal, markerContent)) {
-        console.log('GAME OVER.')
         endGame('Three in a row', markerContent)
         return true
     }
@@ -127,15 +134,17 @@ const tieGame = () => {
 const endGame = (endType, markerContent='') => {
     if (endType == 'Three in a row') {
         if (player1.getMarker() == markerContent) {
-            console.log('PLAYER 1 WINS.')
+            gameStatus.textContent = `Game Over: ${player1.getName()} wins this round.`
             updateScore(player1)
         } else {
-            console.log('PLAYER 2 WINS.')
+            gameStatus.textContent = `Game Over: ${player2.getName()} wins this round.`
             updateScore(player2)
         }
     } else if (endType == 'tie') {
         console.log('NO ONE WINS. TIE GAME.')
     }
+    restartGameButton.textContent = 'Play again'
+    gameProgress = 'Finished'
 }
 
 const displayWinningPosition = (winningPosVal) => {
@@ -164,10 +173,12 @@ const updateScore = (player) => {
 
 const restartGame = () => {
     currentPlayerTurn = player1
+    gameProgress = 'In progress'
     playerOneContainer.classList.remove('playerTurn')
     playerTwoContainer.classList.remove('playerTurn')
     playerOneContainer.classList.add('playerTurn')
     gameStatus.textContent = 'X Turn'
+    restartGameButton.textContent = 'Restart game'
 
     allPos['X'] = []
     allPos['O'] = []
@@ -240,7 +251,11 @@ const getRandomInt = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-  }
+}
+
+const handleShare = () => {
+    console.log('Sharing!')
+}
 
 const setGamemode = () => {
     selectedGamemode = gamemode.options[gamemode.selectedIndex].text;
@@ -258,11 +273,7 @@ const startGame = () => {
         cell.addEventListener('click', handleClick)
     }
 
-    shareButton.addEventListener('click', () => {
-        for (let cell of grid) {
-            cell.click()
-        }
-    })
+    shareButton.addEventListener('click', handleShare)
     
     difficultyLevelsSelect.addEventListener('change', setDifficulty)
     gamemode.addEventListener('change', setGamemode)
@@ -287,6 +298,7 @@ const player1 = Player('Player1', 'X')
 const player2 = Player('Player2', 'O')
 let difficulty = difficultyLevelsSelect.value
 let selectedGamemode = gamemode.options[gamemode.selectedIndex].text;
+let gameProgress = 'In progress'
 let currentPlayerTurn = player1
 
 document.addEventListener('DOMContentLoaded', (event) => {
