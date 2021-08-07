@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 body {
     background-color: #F2EBD3;
     text-align: center;
+    font-family: Bebas Neue, sans-serif;
 }
 
 .game {
@@ -17,7 +20,32 @@ body {
 
 .selectionContainer {
     display: flex;
+    justify-content: space-around;
+}
+
+.playerTurnContainer {
+    display: flex;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.playerOneContainer, .playerTwoContainer {
+    display: flex;
     justify-content: space-between;
+    width: 100px;
+    padding: 10px;
+    margin: 10px;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+.playerOneContainer:hover, .playerTwoContainer:hover {
+    background-color: #0DA192;
+    cursor: pointer;
+}
+
+.playerTurn {
+    border-bottom: 5px solid white;
 }
 
 .grid {
@@ -39,6 +67,8 @@ body {
     font-size: 1rem;
     font-weight: bold;
     background-color: #14BDAC;
+    transition: transform .4s;
+    -webkit-transition: background-color 1s;
 }
 
 .marker {
@@ -62,3 +92,7 @@ body {
     margin-top: 30px;
 }
 
+
+.winningCell {
+    background-color: #0DA192;
+}

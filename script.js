@@ -1,5 +1,12 @@
 const grid = document.querySelectorAll('.cell')
 const restartGameButton = document.getElementById('restartGame')
+const gameStatus = document.querySelector('.gameStatus')
+const playerOneContainer = document.querySelector('.playerOneContainer')
+const playerTwoContainer = document.querySelector('.playerTwoContainer')
+const playerOneScoreElem = document.querySelector('.playerOneScore')
+const playerTwoScoreElem = document.querySelector('.playerTwoScore')
+const gamemode = document.getElementById('gamemode')
+const difficultyLevelsSelect = document.getElementById('difficultyLevelsSelect')
 
 const gameBoard = {
     "1": "&nbsp;",
@@ -30,7 +37,7 @@ const Player = (name, marker) => {
 }
 
 const handleClick = (event) => {
-    const cell = event.target
+    const cell = event.target || event
     const positionValue = cell.getAttribute('positionValue')
     const marker = cell.childNodes[1]
 
@@ -47,9 +54,16 @@ const markBox = (marker, positionValue) => {
     if (currentPlayerTurn === player1) {
         markerContent = player1.getMarker()
         currentPlayerTurn = player2
+        gameStatus.textContent = `${markerContent == 'X' ? 'O': 'X'} Turn`
+        playerOneContainer.classList.remove('playerTurn')
+        playerTwoContainer.classList.add('playerTurn')
+        
     } else {
         markerContent = player2.getMarker()
         currentPlayerTurn = player1
+        gameStatus.textContent = `${markerContent == 'X' ? 'O': 'X'} Turn`
+        playerOneContainer.classList.add('playerTurn')
+        playerTwoContainer.classList.remove('playerTurn')
     }
 
     marker.textContent = markerContent
@@ -82,6 +96,7 @@ const threeInARow = (allWinningPosVal, markerContent) => {
                 const checkIfAllWinningPos = winningPosVal.every(pos => allPos[markerContent].includes(pos))
 
                 if (checkIfAllWinningPos) {
+                    displayWinningPosition(winningPosVal)
                     return true
                 }
             }
@@ -104,20 +119,47 @@ const endGame = (endType, markerContent='') => {
     if (endType == 'Three in a row') {
         if (player1.getMarker() == markerContent) {
             console.log('PLAYER 1 WINS.')
+            updateScore(player1)
         } else {
             console.log('PLAYER 2 WINS.')
+            updateScore(player2)
         }
     } else if (endType == 'tie') {
         console.log('NO ONE WINS. TIE GAME.')
     }
 }
 
+const displayWinningPosition = (winningPosVal) => {
+    console.log(winningPosVal)
+    const cells = Object.values(grid)
+    for (let val of winningPosVal) {
+        let winningCell = cells[val - 1]
+        winningCell.classList.add('winningCell')
+    }
+}
+
+const updateScore = (player) => {
+    player.incrementScore()
+
+    if (player.getMarker() === 'X') {
+        playerOneScoreElem.textContent = player.getScore()
+    } else {
+        playerTwoScoreElem.textContent = player.getScore()
+    }
+}
+
 const restartGame = () => {
     currentPlayerTurn = player1
+    playerOneContainer.classList.remove('playerTurn')
+    playerTwoContainer.classList.remove('playerTurn')
+    playerOneContainer.classList.add('playerTurn')
+    gameStatus.textContent = 'X Turn'
+
     allPos['X'] = []
     allPos['O'] = []
 
     grid.forEach((cell) => {
+        cell.classList.remove('winningCell')
         const marker = cell.childNodes[1]
         marker.innerHTML = '&nbsp;'
     })
@@ -125,12 +167,26 @@ const restartGame = () => {
 
 const isMarked = (marker) => marker.innerHTML === '&nbsp;' ? false : true
 
+const setGamemode = () => {
+    let selectedGamemode = gamemode.options[gamemode.selectedIndex].text;
+
+    console.log(selectedGamemode)
+    restartGame()
+}
+
+
 const startGame = () => {
     for (let cell of grid) {
         cell.addEventListener('click', handleClick)
     }
+    for (let cell of grid) {
+        handleClick(cell)
+    }
+    difficultyLevelsSelect.addEventListener('change', restartGame)
+    gamemode.addEventListener('change', setGamemode)
+    gameStatus.textContent = `X Turn`
 
-    restartGame()
+    setGamemode()
     restartGameButton.addEventListener('click', restartGame)
 }
 

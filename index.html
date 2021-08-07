@@ -18,16 +18,27 @@
                     <option value="">Medium</option>
                     <option value="">Impossible</option>
                     <option value="">Play against a friend</option>
-                    
+                </select>
+
+                <select name="gamemode" id="gamemode">
+                    <option value="">Player vs. AI</option>
+                    <option value="">Player vs Player (Local)</option>
+                    <option value="">Player vs Player (Network)</option>
                 </select>
         
                 <span></span>
                 <button>Share</span>
             </div>
         
-            <div class="playerTurn">
-                <span class="player1">X</span>
-                <span class="player2">O</span>
+            <div class="playerTurnContainer">
+                <span class="playerOneContainer">
+                    <span class="playerMarker">X</span>
+                    <span class="playerOneScore">-</span>
+                </span>
+                <span class="playerTwoContainer">
+                    <span class="playerMarker">O</span>
+                    <span class="playerTwoScore">-</span>
+                </span>
             </div>
         
             <div class="gameStatusContainer">
