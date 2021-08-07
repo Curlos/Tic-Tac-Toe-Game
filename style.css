@@ -1,12 +1,34 @@
+body {
+    background-color: #F2EBD3;
+    text-align: center;
+}
+
+.game {
+    display: flex;
+    justify-content: center;
+}
+
+.gameContainer {
+    text-align: center;
+    width: 700px;
+    background-color: #14BDAC;
+    padding: 20px;
+}
+
+.selectionContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
 .grid {
     display: grid;
-    grid-gap: 1px;
+    grid-gap: 5px;
+    border: 5px solid #0DA192;
     grid-template-columns: repeat(3, 1fr);
-    border: 3px solid;
-    grid-gap: 3px;
-    background-color: black;
-    height: 300px;
-    width: 300px;
+    background-color: #0DA192;
+    height: 250px;
+    width: 250px;
+    margin: auto;
 }
   
 .cell {
@@ -16,7 +38,7 @@
     font-family: Arial;
     font-size: 1rem;
     font-weight: bold;
-    background-color: #ffffff;
+    background-color: #14BDAC;
 }
 
 .marker {
@@ -29,4 +51,14 @@
     font-weight: normal;
     pointer-events: none;
     outline-style:none;
+    color: #545454;
 }
+
+.gameStatusContainer {
+    margin: 10px;
+}
+
+.restartGame {
+    margin-top: 30px;
+}
+
